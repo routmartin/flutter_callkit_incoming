@@ -60,6 +60,11 @@ class CallkitIncomingBroadcastReceiver : BroadcastReceiver() {
                 action = "${context.packageName}.${CallkitConstants.ACTION_CALL_CALLBACK}"
                 putExtra(CallkitConstants.EXTRA_CALLKIT_INCOMING_DATA, data)
             }
+        fun getIntentCancelIncomingCallNotification(context: Context, data: Bundle?) =
+            Intent(context, CallkitIncomingBroadcastReceiver::class.java).apply {
+                action = "${context.packageName}.${CallkitConstants.ACTION_CALL_CANCEL_CALL_NOTIFICATION}"
+                putExtra(CallkitConstants.EXTRA_CALLKIT_INCOMING_DATA, data)
+            }
     }
 
 
@@ -142,6 +147,14 @@ class CallkitIncomingBroadcastReceiver : BroadcastReceiver() {
                         val closeNotificationPanel = Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS)
                         context.sendBroadcast(closeNotificationPanel)
                     }
+                } catch (error: Exception) {
+                    Log.e(TAG, null, error)
+                }
+            }
+            "${context.packageName}.${CallkitConstants.ACTION_CALL_CANCEL_CALL_NOTIFICATION}" -> {
+                try { 
+                    context.stopService(Intent(context, CallkitSoundPlayerService::class.java))
+                    callkitNotificationManager.clearIncomingNotification(data, false)
                 } catch (error: Exception) {
                     Log.e(TAG, null, error)
                 }

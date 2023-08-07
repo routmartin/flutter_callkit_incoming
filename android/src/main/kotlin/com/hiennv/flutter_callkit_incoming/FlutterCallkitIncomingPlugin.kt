@@ -235,6 +235,16 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
                 "getDevicePushTokenVoIP" -> {
                     result.success("")
                 }
+                "cancelIncomingCallNotification" -> {
+                    val data = Data(call.arguments() ?: HashMap())
+                    context?.sendBroadcast(
+                        CallkitIncomingBroadcastReceiver.getIntentCancelIncomingCallNotification(
+                            requireNotNull(context),
+                            data.toBundle()
+                        )
+                    )
+                    result.success("OK")
+                }
             }
         } catch (error: Exception) {
             result.error("error", error.message, "")
