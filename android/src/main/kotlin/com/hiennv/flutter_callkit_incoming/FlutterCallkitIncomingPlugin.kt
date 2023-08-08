@@ -7,6 +7,7 @@ import android.os.Handler
 import android.os.Looper
 import androidx.annotation.NonNull
 import androidx.annotation.Nullable
+import android.os.Bundle
 
 import com.hiennv.flutter_callkit_incoming.Utils.Companion.reapCollection
 
@@ -85,6 +86,7 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
     private var activity: Activity? = null
     private var context: Context? = null
     private var callkitNotificationManager: CallkitNotificationManager? = null
+    var dataBundle: Bundle? = null
 
     override fun onAttachedToEngine(flutterPluginBinding: FlutterPlugin.FlutterPluginBinding) {
         sharePluginWithRegister(flutterPluginBinding)
@@ -149,6 +151,7 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
                 "showCallkitIncoming" -> {
                     val data = Data(call.arguments() ?: HashMap())
                     data.from = "notification"
+                    dataBundle = data.toBundle()
                     //send BroadcastReceiver
                     context?.sendBroadcast(
                         CallkitIncomingBroadcastReceiver.getIntentIncoming(
@@ -235,12 +238,11 @@ class FlutterCallkitIncomingPlugin : FlutterPlugin, MethodCallHandler, ActivityA
                 "getDevicePushTokenVoIP" -> {
                     result.success("")
                 }
-                "cancelIncomingCallNotification" -> {
-                    val data = Data(call.arguments() ?: HashMap())
+                "acceptCall" -> {
                     context?.sendBroadcast(
-                        CallkitIncomingBroadcastReceiver.getIntentCancelIncomingCallNotification(
+                        CallkitIncomingBroadcastReceiver.getIntentAcceptIncomingCall(
                             requireNotNull(context),
-                            data.toBundle()
+                            dataBundle
                         )
                     )
                     result.success("OK")

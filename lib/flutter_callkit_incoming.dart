@@ -115,7 +115,7 @@ class FlutterCallkitIncoming {
     return null;
   }
 
-  static Future cancelIncomingCallNotification(String id) async {
-    await _channel.invokeMethod("cancelIncomingCallNotification", {'id': id});
+  static Future acceptCall(String id) async {
+    await _channel.invokeMethod("acceptCall", {'id': id});
   }
 }
