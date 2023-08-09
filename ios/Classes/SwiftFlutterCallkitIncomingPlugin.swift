@@ -280,7 +280,6 @@ public class SwiftFlutterCallkitIncomingPlugin: NSObject, FlutterPlugin, CXProvi
         }else {
             call = Call(uuid: UUID(uuidString: data.uuid)!, data: data)
         }
-        self.sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ACCEPT, data.toJSON())
         self.callManager.acceptCall(call: call!)
     }
     
