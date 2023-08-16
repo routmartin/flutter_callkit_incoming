@@ -26,7 +26,6 @@ import com.squareup.picasso.Picasso
 import com.squareup.picasso.Target
 import okhttp3.OkHttpClient
 
-
 class CallkitNotificationManager(private val context: Context) {
 
     companion object {
@@ -432,33 +431,35 @@ class CallkitNotificationManager(private val context: Context) {
     }
 
     private fun getAcceptPendingIntent(id: Int, data: Bundle): PendingIntent {
-        val isAppBackground = data.getBoolean("IS_APP_BACKGROUND")
-        if(isAppBackground){
+        // val isAppBackground = data.getBoolean("IS_APP_BACKGROUND")
+        // if(isAppBackground){
             val intentTransparent = TransparentActivity.getIntent(
                 context,
                 CallkitConstants.ACTION_CALL_ACCEPT,
                 data
             )    
+            intentTransparent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             return PendingIntent.getActivity(context, id, intentTransparent, getFlagPendingIntent())
-        }else{
-            val acceptIntent = CallkitIncomingBroadcastReceiver.getIntentAccept(context, data)
-            return PendingIntent.getBroadcast(context, id, acceptIntent, getFlagPendingIntent())
-        }
+        // }else{
+            // val acceptIntent = CallkitIncomingBroadcastReceiver.getIntentAccept(context, data)
+            // return PendingIntent.getBroadcast(context, id, acceptIntent, getFlagPendingIntent())
+        // }
     }
 
     private fun getDeclinePendingIntent(id: Int, data: Bundle): PendingIntent {
-        val isAppBackground = data.getBoolean("IS_APP_BACKGROUND")
-        if(isAppBackground) {
+        // val isAppBackground = data.getBoolean("IS_APP_BACKGROUND")
+        // if(isAppBackground) {
             val intentTransparent = TransparentActivity.getIntent(
                         context,
                         CallkitConstants.ACTION_CALL_DECLINE,
                         data
                     )
+            intentTransparent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
             return PendingIntent.getActivity(context, id, intentTransparent, getFlagPendingIntent())
-        } else{
-            val declineIntent = CallkitIncomingBroadcastReceiver.getIntentDecline(context, data)
-            return PendingIntent.getBroadcast(context, id, declineIntent, getFlagPendingIntent())
-        }
+        // } else{
+        //     val declineIntent = CallkitIncomingBroadcastReceiver.getIntentDecline(context, data)
+        //     return PendingIntent.getBroadcast(context, id, declineIntent, getFlagPendingIntent())
+        // }
     }
 
     private fun getTimeOutPendingIntent(id: Int, data: Bundle): PendingIntent {
