@@ -6,6 +6,7 @@ import android.content.Context
 import android.content.Intent
 import android.os.Build
 import android.os.Bundle
+import android.app.ActivityManager
 import android.util.Log
 
 class CallkitIncomingBroadcastReceiver : BroadcastReceiver() {
@@ -76,6 +77,20 @@ class CallkitIncomingBroadcastReceiver : BroadcastReceiver() {
         when (action) {
             "${context.packageName}.${CallkitConstants.ACTION_CALL_INCOMING}" -> {
                 try {
+
+                    val activityManager = context.getSystemService(Context.ACTIVITY_SERVICE) as ActivityManager
+                    val appProcesses = activityManager.runningAppProcesses
+
+                    val packageName = context.packageName
+                    for (appProcess in appProcesses) {
+                        if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_SERVICE && appProcess.processName == packageName) {
+                            // If the app is in the background state, this will execute
+                            data.putBoolean("IS_APP_BACKGROUND",true)
+                        } else if (appProcess.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND && appProcess.processName == packageName) {
+                            // If the app is in the foreground state, this will execute
+                            data.putBoolean("IS_APP_BACKGROUND",false)
+                        }
+                    }
                     callkitNotificationManager.showIncomingNotification(data)
                     sendEventFlutter(CallkitConstants.ACTION_CALL_INCOMING, data)
                     addCall(context, Data.fromBundle(data))

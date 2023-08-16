@@ -261,10 +261,16 @@ class CallkitIncomingActivity : Activity() {
     }
 
 
-    private fun onAcceptClick() {
+    private fun onAcceptClick() { 
         val data = intent.extras?.getBundle(CallkitConstants.EXTRA_CALLKIT_INCOMING_DATA)
-        val acceptIntent = TransparentActivity.getIntent(this, CallkitConstants.ACTION_CALL_ACCEPT, data)
-        startActivity(acceptIntent)
+        val isAppBackground = data?.getBoolean("IS_APP_BACKGROUND", false)
+        if(isAppBackground!!) {
+            val acceptIntent = TransparentActivity.getIntent(this, CallkitConstants.ACTION_CALL_ACCEPT, data)
+            startActivity(acceptIntent)   
+        } else {
+            val acceptIntent = CallkitIncomingBroadcastReceiver.getIntentAccept(this@CallkitIncomingActivity, data)
+            sendBroadcast(acceptIntent)
+        }
 
         dismissKeyguard()
         finish()
@@ -279,9 +285,19 @@ class CallkitIncomingActivity : Activity() {
 
     private fun onDeclineClick() {
         val data = intent.extras?.getBundle(CallkitConstants.EXTRA_CALLKIT_INCOMING_DATA)
-        val intent = CallkitIncomingBroadcastReceiver.getIntentDecline(this@CallkitIncomingActivity, data)
-        sendBroadcast(intent)
-        finishTask()
+        val isAppBackground = data?.getBoolean("IS_APP_BACKGROUND", false)
+        if(isAppBackground!!){
+            val declineIntent = TransparentActivity.getIntent(this, CallkitConstants.ACTION_CALL_DECLINE, data)
+            startActivity(declineIntent)
+        } else {
+            val intent = CallkitIncomingBroadcastReceiver.getIntentDecline(this@CallkitIncomingActivity, data)
+            sendBroadcast(intent)
+            // finishTask()
+        }
+        
+
+        dismissKeyguard()
+        finish()
     }
 
     private fun finishDelayed() {

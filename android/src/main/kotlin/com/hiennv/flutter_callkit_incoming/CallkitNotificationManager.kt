@@ -432,17 +432,33 @@ class CallkitNotificationManager(private val context: Context) {
     }
 
     private fun getAcceptPendingIntent(id: Int, data: Bundle): PendingIntent {
-        val intentTransparent = TransparentActivity.getIntent(
-            context,
-            CallkitConstants.ACTION_CALL_ACCEPT,
-            data
-        )
-        return PendingIntent.getActivity(context, id, intentTransparent, getFlagPendingIntent())
+        val isAppBackground = data.getBoolean("IS_APP_BACKGROUND")
+        if(isAppBackground){
+            val intentTransparent = TransparentActivity.getIntent(
+                context,
+                CallkitConstants.ACTION_CALL_ACCEPT,
+                data
+            )    
+            return PendingIntent.getActivity(context, id, intentTransparent, getFlagPendingIntent())
+        }else{
+            val acceptIntent = CallkitIncomingBroadcastReceiver.getIntentAccept(context, data)
+            return PendingIntent.getBroadcast(context, id, acceptIntent, getFlagPendingIntent())
+        }
     }
 
     private fun getDeclinePendingIntent(id: Int, data: Bundle): PendingIntent {
-        val declineIntent = CallkitIncomingBroadcastReceiver.getIntentDecline(context, data)
-        return PendingIntent.getBroadcast(context, id, declineIntent, getFlagPendingIntent())
+        val isAppBackground = data.getBoolean("IS_APP_BACKGROUND")
+        if(isAppBackground) {
+            val intentTransparent = TransparentActivity.getIntent(
+                        context,
+                        CallkitConstants.ACTION_CALL_DECLINE,
+                        data
+                    )
+            return PendingIntent.getActivity(context, id, intentTransparent, getFlagPendingIntent())
+        } else{
+            val declineIntent = CallkitIncomingBroadcastReceiver.getIntentDecline(context, data)
+            return PendingIntent.getBroadcast(context, id, declineIntent, getFlagPendingIntent())
+        }
     }
 
     private fun getTimeOutPendingIntent(id: Int, data: Bundle): PendingIntent {
@@ -461,6 +477,7 @@ class CallkitNotificationManager(private val context: Context) {
 
     private fun getActivityPendingIntent(id: Int, data: Bundle): PendingIntent {
         val intent = CallkitIncomingActivity.getIntent(context, data)
+        intent.flags = Intent.FLAG_ACTIVITY_CLEAR_TOP or Intent.FLAG_ACTIVITY_NEW_TASK
         return PendingIntent.getActivity(context, id, intent, getFlagPendingIntent())
     }
 
