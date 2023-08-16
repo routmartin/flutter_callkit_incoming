@@ -89,6 +89,10 @@ class FlutterCallkitIncoming {
     await _channel.invokeMethod("endAllCalls");
   }
 
+  static Future removeActiveCall() async {
+    await _channel.invokeMethod("removeActiveCall");
+  }
+
   /// Get active calls.
   /// On iOS: return active calls from Callkit.
   /// On Android: only return last call
