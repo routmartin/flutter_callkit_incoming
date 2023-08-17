@@ -70,7 +70,6 @@ class CallkitNotificationManager(private val context: Context) {
         }
     }
 
-
     fun showIncomingNotification(data: Bundle) {
         data.putLong(EXTRA_TIME_START_CALL, System.currentTimeMillis())
 
@@ -92,7 +91,7 @@ class CallkitNotificationManager(private val context: Context) {
         notificationBuilder.setDefaults(NotificationCompat.DEFAULT_VIBRATE)
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             notificationBuilder.setCategory(NotificationCompat.CATEGORY_CALL)
-            notificationBuilder.priority = NotificationCompat.PRIORITY_MAX
+            notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
         }
         notificationBuilder.setVisibility(NotificationCompat.VISIBILITY_PUBLIC)
         notificationBuilder.setOngoing(true)
@@ -121,7 +120,7 @@ class CallkitNotificationManager(private val context: Context) {
         } catch (error: Exception) {
         }
         notificationBuilder.setChannelId(NOTIFICATION_CHANNEL_ID_INCOMING)
-        notificationBuilder.priority = NotificationCompat.PRIORITY_MAX
+        notificationBuilder.priority = NotificationManager.IMPORTANCE_HIGH
         val isCustomNotification =
             data.getBoolean(CallkitConstants.EXTRA_CALLKIT_IS_CUSTOM_NOTIFICATION, false)
         val isCustomSmallExNotification =
@@ -215,7 +214,11 @@ class CallkitNotificationManager(private val context: Context) {
         if (avatarUrl != null && avatarUrl.isNotEmpty()) {
             val headers =
                 data.getSerializable(CallkitConstants.EXTRA_CALLKIT_HEADERS) as HashMap<String, Any?>
-            getPicassoInstance(context, headers).load(avatarUrl)
+            getPicassoInstance(context, headers)
+                .load(avatarUrl)
+                .placeholder(R.drawable.ic_default_avatar)
+                .error(R.drawable.ic_default_avatar)
+                .resize(100,100)
                 .transform(CircleTransform())
                 .into(targetLoadAvatarCustomize)
         }
@@ -297,7 +300,11 @@ class CallkitNotificationManager(private val context: Context) {
                     data.getSerializable(CallkitConstants.EXTRA_CALLKIT_HEADERS) as HashMap<String, Any?>
 
                 getPicassoInstance(context, headers).load(avatarUrl)
-                    .transform(CircleTransform()).into(targetLoadAvatarCustomize)
+                    .placeholder(R.drawable.ic_default_avatar)
+                    .error(R.drawable.ic_default_avatar)
+                    .resize(100,100)
+                    .transform(CircleTransform())
+                    .into(targetLoadAvatarCustomize)
             }
             notificationBuilder.setStyle(NotificationCompat.DecoratedCustomViewStyle())
             notificationBuilder.setCustomContentView(notificationViews)
