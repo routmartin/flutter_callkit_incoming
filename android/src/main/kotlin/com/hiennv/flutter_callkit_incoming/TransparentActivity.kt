@@ -32,6 +32,7 @@ class TransparentActivity : Activity() {
         val broadcastIntent = CallkitIncomingBroadcastReceiver.getIntent(this, intent.action!!, data)
         broadcastIntent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND)
         sendBroadcast(broadcastIntent)
+        finishAndRemoveTask();
 
         val activityIntent = AppUtils.getAppIntent(this, intent.action, data)
         startActivity(activityIntent)
