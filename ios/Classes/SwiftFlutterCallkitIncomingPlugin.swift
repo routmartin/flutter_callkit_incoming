@@ -157,7 +157,7 @@ public class SwiftFlutterCallkitIncomingPlugin: NSObject, FlutterPlugin, CXProvi
         connectedCall(data!)
       } else {
         if let getArgs = args as? [String: Any] {
-          data = Data(args: getArgs)
+          // data = Data(args: getArgs)
           connectedCall(data!)
         }
       }
