@@ -110,6 +110,10 @@ public class SwiftFlutterCallkitIncomingPlugin: NSObject, FlutterPlugin, CXProvi
       }
       result("OK")
       break
+    case "checkIncommingCallAnswer":
+      checkIncommingCallAnswer()
+      result("OK")
+      break
     case "endCall":
       guard let args = call.arguments else {
         result("OK")
@@ -246,6 +250,12 @@ public class SwiftFlutterCallkitIncomingPlugin: NSObject, FlutterPlugin, CXProvi
     }
     initCallkitProvider(data)
     callManager.startCall(data)
+  }
+
+  @objc public func checkIncommingCallAnswer() {
+    if answerCall != nil {
+      sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_ACCEPT, data?.toJSON())
+    }
   }
 
   @objc public func muteCall(_ callId: String, isMuted: Bool) {

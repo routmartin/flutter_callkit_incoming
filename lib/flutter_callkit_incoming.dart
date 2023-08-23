@@ -107,6 +107,10 @@ class FlutterCallkitIncoming {
     return await _channel.invokeMethod("getDevicePushTokenVoIP");
   }
 
+  static Future checkIncommingCallAnswer() async {
+    await _channel.invokeMethod("checkIncommingCallAnswer");
+  }
+
   static CallEvent? _receiveCallEvent(dynamic data) {
     Event? event;
     Map<String, dynamic> body = {};
