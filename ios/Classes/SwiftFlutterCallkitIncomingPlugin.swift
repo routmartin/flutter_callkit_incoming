@@ -34,6 +34,7 @@ public class SwiftFlutterCallkitIncomingPlugin: NSObject, FlutterPlugin, CXProvi
 
   private var outgoingCall: Call?
   private var answerCall: Call?
+  private var isRemoveActiveCall: Bool = false
 
   private var data: Data?
   private var isFromPushKit: Bool = false
@@ -330,8 +331,11 @@ public class SwiftFlutterCallkitIncomingPlugin: NSObject, FlutterPlugin, CXProvi
   @objc public func removeActiveCall() {
     isFromPushKit = false
     answerCall = nil
+    outgoingCall = nil
+    isRemoveActiveCall = true
     callManager.removeAllCalls()
     callManager.endActiveCall()
+
   }
 
   public func saveEndCall(_ uuid: String, _ reason: Int) {
@@ -474,6 +478,14 @@ public class SwiftFlutterCallkitIncomingPlugin: NSObject, FlutterPlugin, CXProvi
     }
     call.endCall()
     callManager.removeCall(call)
+
+    if answerCall == nil && outgoingCall == nil && isRemoveActiveCall {
+      isRemoveActiveCall = false
+      DispatchQueue.main.asyncAfter(deadline: .now() + 2.0) {
+        action.fulfill()
+      }
+    }
+
     if answerCall == nil && outgoingCall == nil {
       sendEvent(SwiftFlutterCallkitIncomingPlugin.ACTION_CALL_DECLINE, data?.toJSON())
       DispatchQueue.main.asyncAfter(deadline: .now() + 3.0) {
